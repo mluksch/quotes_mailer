@@ -1,14 +1,32 @@
-# Welcome to your CDK TypeScript project
+# Mail sender with inspirational quotes
 
-This is a blank project for CDK development with TypeScript.
+### Usecases
+- Can import quotes from an url or csv content string (into Dynamo-Db)
+- Can send mails with randomly selected imported quote via cronjob
+- Can return a randomly selected imported quote via API
+- Can send a mail with a randomly selected imported quote via api
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+### Initialized via:
+```
+npx cdk init app -l typescript
+```
 
-## Useful commands
+### Deployment:
+```
+npx cdk bootstrap
+npx cdk deploy
+```
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+### Required Secrets
+Define a new Secret in AWS Secretmanager: `quotes_mailer`
+with following secrets:
+```
+mailApiKey: <Basic-Auth-Password for mailgun-Api>
+mailApiUrl: <Base-Path of mailgun-Api>
+mailSender: <Verified Email for Sender in mailgun-Test-Domain>
+mail_receiver: <Verified Email for Recipient in mailgun-Test-Domain>
+```
+
+### External Apis:
+- Mailgun
+- Quotes fetched from: https://raw.githubusercontent.com/dwyl/quotes/main/quotes.json
