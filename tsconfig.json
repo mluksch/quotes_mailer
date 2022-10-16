@@ -21,10 +21,15 @@
     "strictPropertyInitialization": false,
     "typeRoots": [
       "./node_modules/@types"
-    ]
+    ],
+    "paths": {
+      "@usecases/*": ["./src/usecases/*"],
+      "@stores/*": ["./src/stores/*"]
+    }
   },
   "exclude": [
     "node_modules",
     "cdk.out"
-  ]
+  ],
+  "include": ["lib"]
 }
