@@ -6,7 +6,15 @@ export class CsvFileQuoteFetcher
   implements QuotesFetcher<{ csvContent: string }>
 {
   constructor(
-    private quoteMapper: (dataItem: any) => Quote = (dataItem) => dataItem
+    private quoteMapper: (dataItem: {
+      QUOTE: string;
+      AUTHOR: string;
+      GENRE: string;
+    }) => Quote = (dataItem) => ({
+      author: dataItem.AUTHOR ?? "",
+      genre: dataItem.GENRE ?? "",
+      text: dataItem.QUOTE,
+    })
   ) {}
 
   async fetchQuotes(input: { csvContent: string }): Promise<Quote[]> {

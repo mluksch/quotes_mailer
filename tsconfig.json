@@ -5,6 +5,9 @@
     "lib": [
       "es2018"
     ],
+    "esModuleInterop": true,
+    "skipDefaultLibCheck": false,
+    "skipLibCheck": true,
     "declaration": true,
     "strict": true,
     "noImplicitAny": true,

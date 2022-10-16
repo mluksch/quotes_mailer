@@ -16,7 +16,12 @@ const QUOTES_URL =
   "https://raw.githubusercontent.com/dwyl/quotes/main/quotes.json";
 
 export const handler: ProxyHandler = async () => {
-  const quotesFetcher = new UrlQuotesFetcher();
+  const quotesFetcher = new UrlQuotesFetcher(
+    (dataItem: { author: string; text: string }) => ({
+      ...dataItem,
+      genre: "",
+    })
+  );
   const quotesStorer = new DynamoDbQuotesStorer(TABLE_QUOTES!);
 
   const usecase = new ImportQuotes(quotesFetcher, quotesStorer);

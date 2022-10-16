@@ -4,12 +4,11 @@ import {
   DynamoDBDocumentClient,
   GetCommand,
   PutCommand,
+  ScanCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { QuotePicker } from "./interface/QuotePicker";
 import * as _ from "lodash";
-
-const QUOTES_SIZE = 100;
 
 export class DynamoDbQuotesStorer implements QuotesStorer, QuotePicker {
   constructor(private quoteTableName: string) {
@@ -32,14 +31,23 @@ export class DynamoDbQuotesStorer implements QuotesStorer, QuotePicker {
   private db: DynamoDBDocumentClient;
 
   async pickAQuote(): Promise<Quote> {
+    const quotesSize = await this.db
+      .send(
+        new ScanCommand({
+          TableName: this.quoteTableName,
+          Select: "COUNT",
+        })
+      )
+      .then((result) => result.Count ?? 0);
     const result = await this.db.send(
       new GetCommand({
         TableName: this.quoteTableName,
         Key: {
-          id: _.random(0, QUOTES_SIZE - 1),
+          id: _.random(0, quotesSize - 1),
         },
       })
     );
+    console.log("** result: " + JSON.stringify(result));
     return result.Item as Quote;
   }
 

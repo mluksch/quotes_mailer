@@ -21,6 +21,7 @@ export class Cdk4Stack extends cdk.Stack {
       entryPoints: [
         path.join(__dirname, "..", "src", "query.ts"),
         path.join(__dirname, "..", "src", "import.ts"),
+        path.join(__dirname, "..", "src", "sendMail.ts"),
       ],
     });
 
@@ -46,6 +47,24 @@ export class Cdk4Stack extends cdk.Stack {
       },
     });
 
+    const secret = cdk.aws_secretsmanager.Secret.fromSecretNameV2(
+      this,
+      "mail-sender-secret",
+      "quotes_mailer"
+    );
+    const lambdaMailer = new cdk.aws_lambda.Function(this, "lambdaMailer", {
+      runtime: Runtime.NODEJS_16_X,
+      handler: "sendMail.handler",
+      code: cdk.aws_lambda.Code.fromAsset(path.join(__dirname, "..", "dist")),
+      timeout: Duration.seconds(5),
+      memorySize: 128,
+      environment: {
+        TABLE_QUOTES,
+        MAIL_ARN: secret.secretArn,
+      },
+    });
+    secret.grantRead(lambdaMailer);
+
     const tableQuotes = new cdk.aws_dynamodb.Table(this, "quotes", {
       billingMode: BillingMode.PAY_PER_REQUEST,
       tableName: TABLE_QUOTES,
@@ -55,7 +74,19 @@ export class Cdk4Stack extends cdk.Stack {
       },
     });
     tableQuotes.grantReadData(lambda);
+    tableQuotes.grantReadData(lambdaMailer);
     tableQuotes.grantWriteData(importLambda);
+
+    const rule = new cdk.aws_events.Rule(this, "rule-mailer", {
+      schedule: cdk.aws_events.Schedule.cron({
+        day: "*",
+        hour: "8",
+        minute: "0",
+        month: "*",
+        year: "*",
+      }),
+    });
+    rule.addTarget(new cdk.aws_events_targets.LambdaFunction(lambdaMailer));
 
     const restApi = new cdk.aws_apigateway.RestApi(this, "rest", {
       deployOptions: {
@@ -65,9 +96,8 @@ export class Cdk4Stack extends cdk.Stack {
     restApi.root
       .addResource("quote")
       .addMethod("get", new cdk.aws_apigateway.LambdaIntegration(lambda));
-    // example resource
-    // const queue = new sqs.Queue(this, 'Cdk4Queue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    restApi.root
+      .addResource("mail")
+      .addMethod("get", new cdk.aws_apigateway.LambdaIntegration(lambdaMailer));
   }
 }
