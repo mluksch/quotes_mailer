@@ -14,7 +14,7 @@ npx cdk init app -l typescript
 ### Deployment:
 ```
 npx cdk bootstrap
-npx cdk deploy
+npx cdk deploy // Disclaimer: Endpoints will not be protected after Deployment
 ```
 
 ### Required Secrets
