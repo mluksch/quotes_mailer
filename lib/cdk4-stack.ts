@@ -78,15 +78,23 @@ export class Cdk4Stack extends cdk.Stack {
     tableQuotes.grantWriteData(importLambda);
 
     const rule = new cdk.aws_events.Rule(this, "rule-mailer", {
+      enabled: true,
+      ruleName: "rule-mailer",
+      targets: [
+        new cdk.aws_events_targets.LambdaFunction(lambdaMailer, {
+          event: cdk.aws_events.RuleTargetInput.fromObject({ message: "hi" }),
+        }),
+      ],
+      // Utc: 8:00
       schedule: cdk.aws_events.Schedule.cron({
-        day: "*",
-        hour: "8",
-        minute: "0",
         month: "*",
         year: "*",
+        day: "*",
+        hour: "6",
+        minute: "0",
       }),
     });
-    rule.addTarget(new cdk.aws_events_targets.LambdaFunction(lambdaMailer));
+    cdk.aws_events_targets.addLambdaPermission(rule, lambdaMailer);
 
     const restApi = new cdk.aws_apigateway.RestApi(this, "rest", {
       deployOptions: {

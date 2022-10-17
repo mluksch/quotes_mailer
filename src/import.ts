@@ -3,13 +3,6 @@ import { ImportQuotes } from "./usecases/ImportQuotes";
 import { UrlQuotesFetcher } from "./stores/quotesFetcher/UrlQuotesFetcher";
 import { DynamoDbQuotesStorer } from "./stores/quotesStorage/DynamoDbQuotesStorer";
 
-export type Quote = {
-  id: number;
-  quote: string;
-  author?: string | null;
-  genre?: string | null;
-};
-
 const TABLE_QUOTES = process.env.TABLE_QUOTES;
 
 const QUOTES_URL =
