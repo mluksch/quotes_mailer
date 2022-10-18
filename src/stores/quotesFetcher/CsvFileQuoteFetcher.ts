@@ -1,10 +1,9 @@
 import { QuotesFetcher } from "./interface/QuotesFetcher";
 import * as pp from "papaparse";
 import { Quote } from "@usecases/domain/Quote";
+import axios from "axios";
 
-export class CsvFileQuoteFetcher
-  implements QuotesFetcher<{ csvContent: string }>
-{
+export class CsvFileQuoteFetcher implements QuotesFetcher<{ url: string }> {
   constructor(
     private quoteMapper: (dataItem: {
       QUOTE: string;
@@ -17,12 +16,14 @@ export class CsvFileQuoteFetcher
     })
   ) {}
 
-  async fetchQuotes(input: { csvContent: string }): Promise<Quote[]> {
+  async fetchQuotes(input: { url: string }): Promise<Quote[]> {
+    const response = await axios.get(input.url);
+    const csvContent = response.data;
     const results = pp.parse<{
       QUOTE: string;
       AUTHOR: string;
       GENRE: string;
-    }>(input.csvContent, {
+    }>(csvContent, {
       header: true,
       delimiter: ";",
     });
