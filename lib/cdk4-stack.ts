@@ -52,9 +52,9 @@ export class Cdk4Stack extends cdk.Stack {
       "mail-sender-secret",
       "quotes_mailer"
     );
-    const lambdaMailer = new cdk.aws_lambda.Function(this, "lambdaMailer", {
+    const lambdaMailer = new cdk.aws_lambda.Function(this, "lambdamailer", {
       runtime: Runtime.NODEJS_16_X,
-      handler: "sendMail.handler",
+      handler: "sendmail.handler",
       code: cdk.aws_lambda.Code.fromAsset(path.join(__dirname, "..", "dist")),
       timeout: Duration.seconds(5),
       memorySize: 128,
