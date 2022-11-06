@@ -1,10 +1,10 @@
 import * as cdk from "aws-cdk-lib";
-import { Duration } from "aws-cdk-lib";
-import { Construct } from "constructs";
-import { Runtime } from "aws-cdk-lib/aws-lambda";
+import {Duration, RemovalPolicy} from "aws-cdk-lib";
+import {Construct} from "constructs";
+import {Runtime} from "aws-cdk-lib/aws-lambda";
 import * as esbuild from "esbuild";
 import * as path from "path";
-import { AttributeType, BillingMode } from "aws-cdk-lib/aws-dynamodb";
+import {AttributeType, BillingMode} from "aws-cdk-lib/aws-dynamodb";
 
 const TABLE_QUOTES = "quotes";
 
@@ -68,6 +68,7 @@ export class Cdk4Stack extends cdk.Stack {
     const tableQuotes = new cdk.aws_dynamodb.Table(this, "quotes", {
       billingMode: BillingMode.PAY_PER_REQUEST,
       tableName: TABLE_QUOTES,
+      removalPolicy: RemovalPolicy.DESTROY,
       partitionKey: {
         name: "id",
         type: AttributeType.NUMBER,
