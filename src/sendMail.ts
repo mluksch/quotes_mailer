@@ -32,6 +32,6 @@ export const handler: aws.ProxyHandler = async () => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ message: "ok" }),
+    body: JSON.stringify({ message: "ok 1234" }),
   };
 };
