@@ -21,7 +21,7 @@ export class Cdk4Stack extends cdk.Stack {
       entryPoints: [
         path.join(__dirname, "..", "src", "query.ts"),
         path.join(__dirname, "..", "src", "import.ts"),
-        path.join(__dirname, "..", "src", "sendMail.ts"),
+        path.join(__dirname, "..", "src", "sendmail.ts"),
       ],
     });
 
